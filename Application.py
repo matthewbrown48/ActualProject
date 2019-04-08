@@ -90,8 +90,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+                    json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -116,10 +116,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     print "done!"
     return output
-    
 
 
 @app.route('/gdisconnect')
@@ -127,13 +125,15 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print 'Access Token is None'
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(
+                    json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print 'In gdisconnect access token is %s', access_token
     print 'User name is: '
     print login_session['username']
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s'\
+        % login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print 'result is '
@@ -148,11 +148,12 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+                    json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
-        
+
 #
 # BEGIN REST SERVICES
 #
@@ -200,11 +201,11 @@ def restGetItemsByCategoryAndItemId(category_id, item_id):
 
 @app.route('/categories', methods=['GET'])
 def webCategories():
-    #if 'username' not in login_session:
-        #return redirect('/login')
-    #else:
-    categories = session.query(Category).all()
-    return render_template('Categories.html', categories=categories)
+    if 'username' not in login_session:
+        return redirect('/login')
+    else:
+            categories = session.query(Category).all()
+            return render_template('Categories.html', categories=categories)
 
 
 @app.route('/categories/<int:category_id>/', methods=['GET'])
@@ -216,54 +217,55 @@ def webCategoryItems(category_id):
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>/delete')
 def webDeleteItem(category_id, item_id):
-    #if 'username' not in login_session:
-        #return redirect('/login')
-    #else:
-    itemDelete = session.query(Items).filter_by(id=item_id).one()
-    session.delete(itemDelete)
-    session.commit()
-    return redirect(url_for('webCategoryItems', category_id=category_id))
+    if 'username' not in login_session:
+        return redirect('/login')
+    else:
+            itemDelete = session.query(Items).filter_by(id=item_id).one()
+            session.delete(itemDelete)
+            session.commit()
+            return redirect(
+                    url_for('webCategoryItems', category_id=category_id))
 
 
 @app.route('/categories/<int:category_id>/items/new', methods=['GET'])
 def webAddItem(category_id):
-    #if 'username' not in login_session:
-    #    return redirect('/login')
-    #else:
-    newItem = Items(name='', description='', category_id=category_id)
-    newItem.id = 0
-    return render_template('EditItem.html', item=newItem)
+    if 'username' not in login_session:
+        return redirect('/login')
+    else:
+            newItem = Items(name='', description='', category_id=category_id)
+            newItem.id = 0
+            return render_template('EditItem.html', item=newItem)
 
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>/edit',
            methods=['GET'])
 def webEditItem(category_id, item_id):
-    #if 'username' not in login_session:
-    #return redirect('/login')
-    #else:
-    updateItem = session.query(Items).filter_by(id=item_id).one()
-    return render_template('EditItem.html', item=updateItem)
+    if 'username' not in login_session:
+        return redirect('/login')
+    else:
+            updateItem = session.query(Items).filter_by(id=item_id).one()
+            return render_template('EditItem.html', item=updateItem)
 
 
 @app.route('/categories/<int:category_id>/items/<int:item_id>',
            methods=['POST'])
 def webUpdateItem(category_id, item_id):
-    #if 'username' not in login_session:
-    #    return redirect('/login')
-    #else:
-    if item_id == 0:
-        newItem = Items(name=request.form['name'],
-                        description=request.form['description'],
-                        category_id=category_id)
-        session.add(newItem)
+    if 'username' not in login_session:
+        return redirect('/login')
     else:
-        updateItem = session.query(Items).filter_by(id=item_id).one()
-        if request.form['name']:
-            updateItem.name = request.form['name']
-        if request.form['description']:
-            updateItem.description = request.form['description']
-        session.add(updateItem)
-    session.commit()
+            if item_id == 0:
+                newItem = Items(name=request.form['name'],
+                                description=request.form['description'],
+                                category_id=category_id)
+                session.add(newItem)
+            else:
+                updateItem = session.query(Items).filter_by(id=item_id).one()
+                if request.form['name']:
+                    updateItem.name = request.form['name']
+                    if request.form['description']:
+                        updateItem.description = request.form['description']
+                        session.add(updateItem)
+            session.commit()
     return redirect(url_for('webCategoryItems', category_id=category_id))
 
 #
