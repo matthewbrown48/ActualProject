@@ -1,55 +1,63 @@
 <!DOCTYPE html>
 <html>
-<head>
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-      
-<script src="//apis.google.com/js/platform.js?onload=start"></script>
+  <head>
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+    <script>
+    function start() {
+    gapi.load('auth2', function() {
+    auth2 = gapi.auth2.init({
+    client_id: '712259201136-9mf9g4e2sjmnngbbb8gar6tl4lv2aklk.apps.googleusercontent.com',
+    // Scopes to request in addition to 'profile' and 'email'
+    //scope: 'additional_scope'
+    });
+    });
+    }
+    </script>
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+  </head>
+  <body>
+    <!-- GOOGLE PLUS SIGN IN-->
 
-</head>    
-<body>
     <div id="signinButton">
-        <span class="g-signin"
-        data-scope="openid email"
-        data-clientid="712259201136-vc68v225cs8o9eolfef6p8rkimg1eoif.apps.googleusercontent.com"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallBAck"
->
-    </span>
-    </div>    
-    <div id="result"></div>
-    
-        </br>
-        <script>
-                function signInCallback(authResult) {
-                  if (authResult['code']) {
-                    // Hide the sign-in button now that the user is authorized
-                    $('#signinButton').attr('style', 'display: none');
-                    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
-                    $.ajax({
-                      type: 'POST',
-                      url: '/gconnect?state={{STATE}}',
-                      processData: false,
-                      data: authResult['code'],
-                      contentType: 'application/octet-stream; charset=utf-8',
-                      success: function(result) {
-                        // Handle or verify the server response if necessary.
-                        if (result) {
-                          $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-                         setTimeout(function() {
-                          window.location.href = "/restaurant";
-                         }, 4000);
-                          
-                      } else if (authResult['error']) {
-                    console.log('There was an error: ' + authResult['error']);
-                  } else {
-                        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-                         }
-                      }
-                      
-                  }); } }
-                </script>
-    </body>
-    
+      <button id="signinButton">Sign In</button>
+    </div>
+    <script>
+      $('#signinButton').click(function() {
+        // signInCallback defined in step 6.
+        auth2.grantOfflineAccess().then(signInCallback);
+      });
+    </script>
+    <script>
+    function signInCallback(authResult) {
+    if (authResult['code']) {
+    // Hide the sign-in button now that the user is authorized
+    $('#signinButton').attr('style', 'display: none');
+    // Send the one-time-use code to the server, if the server responds, write a 'login successful' message to the web page and then redirect back to the main restaurants page
+    $.ajax({
+    type: 'POST',
+    url: '/gconnect?state={{STATE}}',
+    processData: false,
+    data: authResult['code'],
+    contentType: 'application/octet-stream; charset=utf-8',
+    success: function(result) {
+    // Handle or verify the server response if necessary.
+    if (result) {
+    $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+    setTimeout(function() {
+    window.location.href = "/categories";
+    }, 4000);
+
+    } else if (authResult['error']) {
+    console.log('There was an error: ' + authResult['error']);
+    } else {
+    $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+    }
+    }
+
+    }); } }
+    </script>
+    <!--END GOOGLE PLUS SIGN IN -->
+  </body>
 </html>

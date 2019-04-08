@@ -32,10 +32,10 @@ session = DBSession()
 
 @app.route('/login/')
 def LoginFunction():
-    #state = ''.join(random.choice(
-    #    string.ascii_uppercase + string.digits) for x in xrange(32))
-    #login_session['state'] = state
-    return render_template('ServerTest.html', STATE=state)
+    state = ''.join(random.choice(
+        string.ascii_uppercase + string.digits) for x in xrange(32))
+    login_session['state'] = state
+    return render_template('Login.html', STATE=state)
 
 
 @app.route('/gconnect', methods=['POST'])
