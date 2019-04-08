@@ -1,0 +1,39 @@
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+	</head>
+	<body>
+	<div class = 'pane'>
+		<div class = 'header'>
+		<h1>{{ category.name }}</h1>
+	</div>
+	<a href = '{{url_for('newItem', catalog_id = catalog.id) }}'>Create New Item</a>
+<div class = 'flash'>
+		      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+		{% for itemlocal in items %}
+    <div class = 'name'>
+		<span class = 'name'><p>{{i.name}}</p></span>
+	</span>
+	</div>
+	<div class = 'description'>
+		<p>{{itemlocal.description}}</p>
+	</div>
+	<div class = "editdeletepane">
+	<a href='{{url_for('editItem',catalog_id = catalog.id, item_id=itemlocal.id)}}' >Edit</a>
+	<a href='{{url_for('deleteItem', catalog_id = catalog.id, item_id=itemlocal.id)}}' >
+	Delete</a>
+	</div>
+		{% endfor %}
+</div>
+</div>
+	</body>
+</html>

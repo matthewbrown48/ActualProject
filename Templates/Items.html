@@ -1,0 +1,28 @@
+<html>
+    <body>
+        <h1>{{category.name}}  </h1>
+        <table>
+                {% for i in items %}
+                <tr>
+                    <td>
+                        {{i.name}}
+                    </td>
+                    <td>
+                        {{i.description}}
+                    </td>
+                    <td>
+                        <a href="{{url_for('webDeleteItem', category_id = category.id, item_id = i.id)}}" >Delete</a>
+                    </td>
+                    <td>
+                            <a href="{{url_for('webEditItem', category_id = category.id, item_id = i.id)}}" >Edit</a>
+                    </td>
+                    </tr>
+                {% endfor %}
+                </table>
+                
+
+                <a href="{{url_for('webAddItem', category_id = category.id)}}" >New Item</a>
+            </br>
+            <a href="{{url_for('webCategories')}}" >Return to Home Page</a>
+    </body>
+</html>

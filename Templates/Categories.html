@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <h1>Categories</h1>
+
+        {% for i in categories %}
+        <a href = "{{url_for('webCategoryItems', category_id = i.id)}}">{{i.name}}</a>
+        </br>
+        {{i.description}}
+        </br>
+        {% endfor %}
+        </br>
+        <a href = "{{url_for('gdisconnect')}}">Logout</a>
+    </body>
+</html>
