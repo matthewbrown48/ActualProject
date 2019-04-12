@@ -32,6 +32,7 @@ class Items(Base):
     description = Column(String(200))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
+    username = Column(String(200))
 
     @property
     def serialize(self):
@@ -40,6 +41,7 @@ class Items(Base):
             'id': self.id,
             'category_id': self.category_id,
             'description': self.description,
+            'username': self.username,
         }
 
 

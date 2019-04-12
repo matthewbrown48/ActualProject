@@ -221,10 +221,16 @@ def webDeleteItem(category_id, item_id):
         return redirect('/login')
     else:
             itemDelete = session.query(Items).filter_by(id=item_id).one()
-            session.delete(itemDelete)
-            session.commit()
-            return redirect(
-                    url_for('webCategoryItems', category_id=category_id))
+            if itemDelete.username == login_session['username']:
+                session.delete(itemDelete)
+                session.commit()
+                return redirect(
+                        url_for('webCategoryItems', category_id=category_id))
+            else:
+                    return "<script>function myFunction() {\
+                        alert('Invalid Permissions. You will be Redirected');\
+                        window.location.href='http://localhost:5000/categories';\
+                        }</script><body onload='myFunction()'>"
 
 
 @app.route('/categories/<int:category_id>/items/new', methods=['GET'])
@@ -256,15 +262,23 @@ def webUpdateItem(category_id, item_id):
             if item_id == 0:
                 newItem = Items(name=request.form['name'],
                                 description=request.form['description'],
-                                category_id=category_id)
+                                category_id=category_id,
+                                username=login_session['username'])
                 session.add(newItem)
             else:
                 updateItem = session.query(Items).filter_by(id=item_id).one()
-                if request.form['name']:
-                    updateItem.name = request.form['name']
-                    if request.form['description']:
-                        updateItem.description = request.form['description']
-                        session.add(updateItem)
+                if updateItem.username == login_session['username']:
+                    if request.form['name']:
+                        updateItem.name = request.form['name']
+                        if request.form['description']:
+                            updateItem.description = request.form[
+                                                    'description']
+                            session.add(updateItem)
+                else:
+                    return "<script>function myFunction() {\
+                        alert('Invalid Permissions. You will be Redirected');\
+                        window.location.href='http://localhost:5000/categories';\
+                        }</script><body onload='myFunction()'>"
             session.commit()
     return redirect(url_for('webCategoryItems', category_id=category_id))
 
